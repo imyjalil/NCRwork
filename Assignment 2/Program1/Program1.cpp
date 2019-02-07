@@ -1,11 +1,28 @@
 // Program1.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-
+#include "pch.h"
 #include <iostream>
-
+using namespace std;
 int main()
 {
-    std::cout << "Hello World!\n"; 
+	int a; cin >> a;
+	int bin[10000];
+	int j, i=0, n = a;
+	while (n > 0)
+	{
+		bin[i++] = n % 2;
+		n /= 2;
+	}
+	for (j = i-1; j >= 0; j--) cout << bin[j];
+	cout << endl; int b, num;
+	cin >> b;
+	i = 0; n = b, num=0;
+	while (n > 0)
+	{
+		num = num +(( n % 10) * pow(2, i++));
+		n /= 10;
+	}
+	cout << num << endl;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
