@@ -9,7 +9,22 @@ int main()
 {
 	cout << "Enter string" << endl;
 	char *s = (char *)malloc(sizeof(char));
-
+	cin >> s;
+	int i, l = strlen(s); char* t=(char *)malloc(l*sizeof(char));
+	for (i = 0; i < l; i++)
+	{
+		int j = i, k = 0;
+		while (s[j] != '\0')
+		{
+			t[k] = s[j]; k++; j++;
+		}
+		j = 0;
+		while (j < i)
+		{
+			t[k] = s[j]; j++; k++;
+		}
+		cout << t << endl;
+	}
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
