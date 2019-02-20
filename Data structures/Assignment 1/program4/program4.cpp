@@ -1,102 +1,64 @@
-#include "pch.h"
+#include<stack>
 #include <iostream>
-#include<string.h>
+#include<string>
 using namespace std;
-class Stack
+stack<int >s;
+void eval(string str)
 {
-	int top;
-	int *s;
-	int size;
-public:
-	Stack()
+	int i, n;
+	for (i = 0; i < str.length();i++)
 	{
-		top = -1;
-	}
-	void setsize(int a)
-	{
-		size = a;
-		s = new int[size];
-	}
-	void push(int a)
-	{
-		if (isfull())
+		if(str[i]>='0' && str[i]<='9')
 		{
-			cout << "Stack already full" << endl; return;
-		}
-		s[++top] = a;
-	}
-	char pop()
-	{
-		if (isempty()) return -1;
-		int a = s[top--];
-		return a;
-	}
-	bool isfull()
-	{
-		return  (top == size - 1);
-	}
-	bool isempty()
-	{
-		return (top == -1);
-	}
-	char peek()
-	{
-		if (!isempty()) return s[top];
-		return -1;
-	}
-	void display()
-	{
-		if (isempty()) {
-			cout << "Stack empty" << endl; return;
-		}
-		for (int i = 0; i <= top; i++) cout << s[i] << " "; cout << endl;
-	}
-	int prec(char a)
-	{
-		if (a == '+' || a == '-') return 1;
-		if (a == '*' || a == '/') return 2;
-	}
-	int eval(char *str)
-	{
-		s = new int[strlen(str) + 1];  int i,j=0,res=0,n[2]; char c, c1;
-		//s1 = new char[strlen(str) + 1];
-		for (i = 0; str[i] != '\0'; i++)
-		{
-			if (str[i] == '+' || str[i] == '-' || str[i] == '/' || str[i] == '*')
+			n = 0;
+			while (str[i] != '@')
 			{
-				int m = pop(), n = pop();
-				if (str[i] == '+')
-				{
-					res = m + n;
-				}
-				else if (str[i] == '-')
-				{
-					res = m - n;
-				}
-				else if (str[i] == '*')
-				{
-					res = m * n;
-				}
-				else if (str[i] == '/')
-				{
-					res = m / n;
-				}
-				push(res);
+				n = n * 10 + (str[i] - '0');
+				i++;
 			}
-			else
+			s.push(n);
+		}
+		else
+		{
+			int a=-1, b=-1;
+			if (!s.empty())
 			{
-				int n = 0; n = n * 10 + (str[i] - '0');
-				while (i + 1 < strlen(str) && str[i + 1] != '@')
+				a = s.top();
+				s.pop();
+			}
+			if (!s.empty())
+			{
+				b = s.top();
+				s.pop();
+			}
+			if (a != -1 && b != -1)
+			{
+				int ans;
+				switch (str[i])
 				{
-					n = n * 10 + (str[i + 1] - '0');
+				case '+':
+					ans = b + a;
+					break;
+				case '-':
+					ans = b - a;
+					break;
+				case '*':
+					ans = b * a;
+					break;
+				case '/':
+					ans = b / a;
+					break;
 				}
-				push(n);
+				s.push(ans);
 			}
 		}
-		return pop();
 	}
-};
+	cout << s.top()<<"\n";
+}
+
 int main()
 {
-	char s[100]; cin >> s; Stack sta; cout << sta.eval(s) << endl;
+	string pf;
+	getline(cin, pf);
+	eval(pf);
 }
