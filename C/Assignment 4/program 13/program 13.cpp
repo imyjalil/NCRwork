@@ -36,6 +36,7 @@ char* expand(char *string1, char *string2)
 				}
 				else//a-c -> abc
 				{
+					//reallocate memory according to the number of characters to be accomodated
 					string2 = (char *)realloc(string2, (strlen(string2) + 1 + (string1[i+1]-string1[i-1]-1)) * sizeof(char));
 					for (char c = (char)(string1[i - 1] + 1); c < (char)(string1[i + 1]); c = (char)(c + 1))
 					{
