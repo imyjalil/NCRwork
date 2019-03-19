@@ -1,52 +1,70 @@
-// program 13.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include "pch.h"
 #include <iostream>
 #include<string.h>
 using namespace std;
-int expand(char *s1, char *s2)
+bool checkalpha(char a, char b)//true if letter a is less than or equal to b
 {
-	int i, j = 1; s2[0] = s1[0];
-	for (i = 1; i < strlen(s1); i++)
+	if ((a >= 'a' && a <= 'z' && b >= 'a' && b <= 'z') || (a >= 'A' && a <= 'Z' && b >= 'A' && b <= 'Z'))
 	{
-		if (s1[i] == '-')
+		if(a<=b) return true;
+		return false;
+	}	
+	return false;
+}
+bool checkdigit(char a, char b)//true if digit a is less than or equal to b
+{
+	if (a >= '0' && a <= '9' && b >= '0' && b <= '9')
+	{
+		if (a <= b) return true;
+		return false;
+	}
+	return false;
+}
+char* expand(char *string1, char *string2)
+{
+	string2 = (char *)malloc((strlen(string1) +1)* sizeof(char));
+	int i, j = 1; string2[0] = string1[0];
+	for (i = 1; i < strlen(string1) - 1; i++)
+	{
+		if (string1[i] == '-')
 		{
-			if ((s1[i - 1] >= 'a' && s1[i + 1] <= 'z') || (s1[i-1] >= '0' && s1[i+1]<='9'))
+			if ((checkalpha(string1[i - 1], string1[i + 1])) || (checkdigit(string1[i - 1], string1[i + 1])))
 			{
-				//char c = (char)(s1[i - 1] + 1); cout << "char:" << c << endl;
-				for (char c = (char)(s1[i - 1] + 1); c < (char) (s1[i + 1]); c = (char)(c+1))
+				if (string1[i - 1] == string1[i + 1])//a-a -> a
 				{
-					s2[j++] = (char)c;
+					i++;
 				}
+				else//a-c -> abc
+				{
+					string2 = (char *)realloc(string2, (strlen(string2) + 1 + (string1[i+1]-string1[i-1]-1)) * sizeof(char));
+					for (char c = (char)(string1[i - 1] + 1); c < (char)(string1[i + 1]); c = (char)(c + 1))
+					{
+						string2[j++] = (char)c;
+					}
+				}
+			}
+			else
+			{
+				string2[j++] = string1[i];
 			}
 		}
 		else
 		{
-			s2[j++] = s1[i];
+			string2[j++] = string1[i];
 		}
 	}
-	s2[j] = '\0';
-	return 0;
+	string2[j++] = string1[i++];
+	string2[j] = '\0';
+	return string2;
 }
 int main()
 {
-	char *s1 = (char *)malloc(100 * sizeof(char)); int i;
+	char *string1 = (char *)malloc(100 * sizeof(char));
 	cout << "Enter string" << endl;
-	scanf("%[^\n]s", s1);
-	char *s2 = (char *)malloc(100 * sizeof(char));
-	expand(s1, s2);
+	scanf("%[^\n]s", string1);
+	char *string2 = NULL;
+	string2 = expand(string1, string2);
 	cout << "Expanded string:";
-	cout << s2 << endl;
+	cout << string2 << endl;
+	free(string1); free(string2);
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

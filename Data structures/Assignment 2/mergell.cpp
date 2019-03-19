@@ -158,7 +158,6 @@ public:
 			cout << endl << "LIST IS EMPTY";
 		return data;
 	}
- 
 	void delete_specific(int ele)
 	{
 		if (start != NULL)
@@ -193,7 +192,6 @@ public:
 		else
 			cout << endl << "LIST IS EMPTY";
 	}
- 
 	void display()
 	{
 		struct Node *temp = start;
@@ -204,42 +202,46 @@ public:
 		}
 		cout << endl;
 	}
- 
-	void merge(LinkedList l)
-	{
-		struct Node *start2 = l.getStart();
-		if (start != NULL)
-		{
-			struct Node *temp = start;
-			while (temp->next != NULL)
-			{
-				temp = temp->next;
+ 	LinkedList merge(LinkedList l2)
+ 	{
+ 		class LinkedList l3;
+ 		struct Node* t1, *t2, *t3, *t4;
+ 		for(t1=start, t2=l2.start;;)
+ 		{
+ 			if(t1->data<t2->data)
+ 			{
+ 				l3.insertend(t1->data);
+ 				t1=t1->next;
 			}
- 
-			temp->next = start2;
+			else
+			{
+				l3.insertend(t2->data);
+				t2=t2->next;
+			}
+			if(t1==NULL || t2==NULL) break;
 		}
-		else
+		while(t1!=NULL)
 		{
-			start = start2;
+			l3.insertend(t1->data);
+			t1=t1->next;
 		}
+		while(t2!=NULL)
+		{
+			l3.insertend(t2->data);
+			t2=t2->next;
+		}
+		return l3;
 	}
- 
 };
  
 int main()
 {
-	LinkedList ll1, ll2;
-	ll1.insertend(50);
-	ll1.insertbegin(10);
-	ll1.insertbefore(10, 20);
-	ll1.insertafter(10, 30);
-	ll1.insertend(40);
+	LinkedList ll1, ll2, ll3;
+	ll1.insertend(50);ll1.insertbegin(10);ll1.insertbefore(50, 20);ll1.insertafter(20, 30);ll1.insertend(60);
 	ll1.display();
-	ll2.insertbegin(70);
-	ll2.insertafter(70, 95);
-	ll2.insertbefore(70, 45);
+	ll2.insertbegin(70);ll2.insertafter(70, 95);ll2.insertbefore(70, 45);
 	ll2.display();
-	ll1.merge(ll2);
-	ll1.display();
+	ll3=ll1.merge(ll2);
+	ll3.display();
 	return 0;
 }

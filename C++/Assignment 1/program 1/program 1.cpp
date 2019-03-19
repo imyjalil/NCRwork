@@ -1,48 +1,58 @@
-// program 1.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include "pch.h"
 #include <iostream>
 using namespace std;
 class Time
 {
-	int h, m, s;
+	int hours, minutes, seconds;
 	public:
 	Time()
 	{
-		h = 0; m = 0; s = 0;
+		hours = 0; minutes = 0; seconds = 0;
 	}
-	Time(int ho, int mo, int so)
+	Time(int hour, int minute, int second)
 	{
-		h = ho; m = mo; s = so;
+		hours = hour; minutes = minute; seconds = second;
 	}
 	void display()
 	{
-		cout << h << ":" << m << ":" << s << endl;
+		cout << "Time is: ";
+		cout << hours << ":" << minutes << ":" << seconds << endl;
 	}
-	Time addTime(Time t1, Time t2)
+	Time addTime(Time time1, Time time2)
 	{
-		Time t3;
-		t3.h = t1.h + t2.h;
-		t3.m = t1.m + t2.m;
-		t3.s = t1.s + t2.s;
-		return t3;
+		Time time3;
+		time3.hours = time1.hours + time2.hours;
+		time3.minutes = time1.minutes + time2.minutes;
+		time3.seconds = time1.seconds + time2.seconds;
+		if (time3.seconds > 60)
+		{
+			time3.minutes++;
+			time3.seconds -= 60;
+		}
+		if (time3.minutes > 60)
+		{
+			time3.hours++;
+			time3.minutes -= 60;
+		}
+		if (time3.hours > 24)
+		{
+			time3.hours = 0;
+		}
+		return time3;
 	}
 };
 int main()
 {
-	Time t1; Time t2(11, 43, 34);
-	Time t3 = t3.addTime(t1, t2);
-	t3.display();
+	int hours = 0, minutes = 0, seconds = 0;
+	Time time1;
+	cout << "Enter hours" << endl; cin >> hours;
+	cout << "Enter minutes" << endl; cin >> minutes;
+	cout << "Enter seconds" << endl; cin >> seconds;
+	if (hours >= 24 || hours < 0 || minutes >= 60 || minutes < 0 || seconds >= 60 || seconds < 0)
+	{
+		cout << "Invalid time" << endl; return 0;
+	}
+	Time time2(hours, minutes, seconds);
+	Time time3 = time3.addTime(time1, time2);
+	time3.display();
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file

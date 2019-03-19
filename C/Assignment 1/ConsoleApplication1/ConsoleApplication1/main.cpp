@@ -7,6 +7,12 @@ int sub(int, int);
 int mul(int, int);
 int divi(int, int);
 
+/*int main()
+{
+	string s; cin >> s;
+	fo
+	return 0;
+}*/
 int main()
 {
 	int a, b;
