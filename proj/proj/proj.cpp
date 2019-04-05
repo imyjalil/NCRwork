@@ -11,9 +11,10 @@ struct Node
 	struct Node *sibling;
 	struct Node *parent;
 };
+typedef struct Node Node;
 class CmdApp
 {
-	struct Node *root, *current;
+	Node *root, *current;
 public:
 	CmdApp()
 	{
@@ -27,6 +28,14 @@ public:
 	}
 	vector<string> tokenise(string fullpath, char chr)
 	{
+		if (fullpath[0] == '/')
+		{
+			fullpath.erase(0, 1);
+		}
+		if (fullpath[fullpath.size() - 1] == '/')
+		{
+			fullpath.erase(fullpath.size() - 1, 1);
+		}
 		string strdup = "";
 		int i = 0; vector<string>tokens;
 		for (i = 0; fullpath[i]; i++)
@@ -47,7 +56,7 @@ public:
 	void insert_directory(string fullpath)
 	{
 		vector<string> tokens = tokenise(fullpath,'/');
-		struct Node *iterator, *iterator_down;
+		Node *iterator, *iterator_down;
 		int index_to_search;
 		if (tokens[0] == "Root")
 		{
@@ -85,7 +94,7 @@ public:
 				}
 			}
 		}
-		struct Node* newNode = new Node;
+		Node* newNode = new Node;
 		newNode->name = tokens[tokens.size() - 1];
 		newNode->directory_flag = true;
 		newNode->children = NULL;
@@ -98,17 +107,17 @@ public:
 		}
 		else
 		{
-			struct Node *last;
+			Node *last;
 			for (last = iterator_down; last->sibling != NULL; last = last->sibling)
 			{
-				if (last->name == tokens[tokens.size() - 1] && last->directory_flag == true)
+				if (last->name == tokens[tokens.size() - 1] /*&& last->directory_flag == true*/)
 				{
-					cout << "Directory already exists" << endl; return;
+					cout << "File/Directory already exists" << endl; return;
 				}
 			}
-			if (last->name == tokens[tokens.size() - 1] && last->directory_flag == true)
+			if (last->name == tokens[tokens.size() - 1] /*&& last->directory_flag == true*/)
 			{
-				cout << "Directory already exists" << endl; return;
+				cout << "File/Directory already exists" << endl; return;
 			}
 			newNode->parent = iterator;
 			last->sibling = newNode;
@@ -117,7 +126,7 @@ public:
 	void insert_file(string fullpath)
 	{
 		vector<string> tokens = tokenise(fullpath, '/');
-		struct Node *iterator, *iterator_down;
+		Node *iterator, *iterator_down;
 		int index_to_search;
 		if (tokens[0] == "Root")
 		{
@@ -155,7 +164,7 @@ public:
 				}
 			}
 		}
-		struct Node* newNode = new Node;
+		Node* newNode = new Node;
 		newNode->name = tokens[tokens.size() - 1];
 		newNode->directory_flag = false;
 		newNode->children = NULL;
@@ -168,17 +177,17 @@ public:
 		}
 		else
 		{
-			struct Node *last;
+			Node *last;
 			for (last = iterator_down; last->sibling != NULL; last = last->sibling)
 			{
-				if (last->name == tokens[tokens.size() - 1] && last->directory_flag == false)
+				if (last->name == tokens[tokens.size() - 1] /*&& last->directory_flag == false*/)
 				{
-					cout << "File already exists" << endl; return;
+					cout << "File/Directory already exists" << endl; return;
 				}
 			}
-			if (last->name == tokens[tokens.size() - 1] && last->directory_flag == false)
+			if (last->name == tokens[tokens.size() - 1] /*&& last->directory_flag == false*/)
 			{
-				cout << "File already exists" << endl; return;
+				cout << "File/Directory already exists" << endl; return;
 			}
 			newNode->parent = iterator;
 			last->sibling = newNode;
@@ -187,9 +196,9 @@ public:
 	void change_directory(string fullpath)
 	{
 		vector<string> tokens = tokenise(fullpath, '/');
-		struct Node *iterator, *iterator_down;
+		Node *iterator, *iterator_down;
 		int index_to_search;
-		if (tokens.size() == 1 && tokens[0] == "..")
+		/*if (tokens.size() == 1 && tokens[0] == "..")
 		{
 			if (current->parent != NULL)
 			{
@@ -200,7 +209,7 @@ public:
 		if (tokens.size() == 1 && tokens[0] == ".")
 		{
 			return;
-		}
+		}*/
 		if (tokens[0] == "Root")
 		{
 			if (tokens.size() == 1)
@@ -222,11 +231,39 @@ public:
 			}
 			for (;;)
 			{
-				if (iterator_down == NULL)
+				if (index_to_search == tokens.size() - 1)
+				{
+					break;
+				}
+				if (tokens[index_to_search] == "..")
+				{
+					if (iterator->parent == NULL)
+					{
+						if (iterator_down != iterator)
+						{
+							iterator_down = iterator;
+						}
+						else
+						{
+							
+						}
+					}
+					else
+					{
+						iterator_down = iterator;
+						iterator = iterator->parent;
+					}
+					index_to_search++;
+				}
+				else if (tokens[index_to_search] == ".")
+				{
+					index_to_search++;
+				}
+				else if (iterator_down == NULL)
 				{
 					cout << "Invalid location" << endl; return;
 				}
-				if (iterator_down->name == tokens[index_to_search] && iterator_down->directory_flag == true)
+				else if (iterator_down->name == tokens[index_to_search] && iterator_down->directory_flag == true)
 				{
 					index_to_search++;
 					iterator = iterator_down;
@@ -239,23 +276,55 @@ public:
 				}
 			}
 		}
-		struct Node* iterator_last;
-		for (iterator_last = iterator_down; iterator_last != NULL; iterator_last = iterator_last->sibling)
+		if (tokens[index_to_search] == "..")
 		{
-			if (iterator_last->name == tokens[index_to_search])
+			if (iterator->parent == NULL)
 			{
-				iterator_down = iterator_last; break;
+				if (iterator_down != iterator)
+				{
+					iterator_down = iterator;
+				}
+				else
+				{
+					
+				}
 			}
+			else
+			{
+				iterator_down = iterator;
+				iterator = iterator->parent;
+			}
+			current = iterator;
 		}
-		if (iterator_last == NULL)
+		else if (tokens[index_to_search] == ".")
 		{
-			cout << "Directory does not exist" << endl; return;
+			index_to_search++;
+			current = iterator;
 		}
-		current = iterator_down;
+		else
+		{
+			Node* iterator_last;
+			for (iterator_last = iterator_down; iterator_last != NULL; iterator_last = iterator_last->sibling)
+			{
+				if (iterator_last->name == tokens[index_to_search])
+				{
+					iterator_down = iterator_last; break;
+				}
+			}
+			if (iterator_last == NULL)
+			{
+				cout << "Directory does not exist" << endl; return;
+			}
+			if (iterator_down->directory_flag == false)
+			{
+				cout << "Cannot move to a file" << endl; return;
+			}
+			current = iterator_down;
+		}
 	}
-	bool parent_directory(struct Node *last)
+	bool parent_directory(Node *last)
 	{
-		struct Node *parentPath;
+		Node *parentPath;
 		parentPath = current;
 		while (parentPath != NULL)
 		{
@@ -281,7 +350,7 @@ public:
 	void delete_directory(string fullpath)
 	{
 		vector<string>tokens = tokenise(fullpath, '/');
-		struct Node* iterator, *iterator_down, *iterator_prev;
+		Node* iterator, *iterator_down, *iterator_prev;
 		int index_to_search;
 		if (tokens[0] == "Root")
 		{
@@ -325,7 +394,7 @@ public:
 				}
 			}
 		}
-		struct Node* last;
+		Node* last;
 		for (last = iterator_down,iterator_prev=last; last != NULL; iterator_prev=last, last = last->sibling)
 		{
 			if (last->name == tokens[index_to_search] && last->directory_flag == true)
@@ -374,7 +443,7 @@ public:
 	void delete_file(string fullpath)
 	{
 		vector<string>tokens = tokenise(fullpath, '/');
-		struct Node* iterator, *iterator_down, *iterator_prev;
+		Node* iterator, *iterator_down, *iterator_prev;
 		int index_to_search;
 		if (tokens[0] == "Root")
 		{
@@ -418,7 +487,7 @@ public:
 				}
 			}
 		}
-		struct Node* last;
+		Node* last;
 		for (last = iterator_down, iterator_prev = last; last != NULL; iterator_prev = last, last = last->sibling)
 		{
 			if (last->name == tokens[index_to_search] && last->directory_flag == false)
@@ -453,7 +522,7 @@ public:
 	}
 	void list_files()
 	{
-		struct Node* iterator = current->children;
+		Node* iterator = current->children;
 		if (iterator == NULL)
 		{
 			cout << "No files to display" << endl; return;
@@ -468,7 +537,7 @@ public:
 	void print_path_to_current_directory()
 	{
 		vector<string>path_from_bottom;
-		struct Node* iterator=current;
+		Node* iterator=current;
 		while(iterator!=NULL)
 		{ 
 			path_from_bottom.push_back(iterator->name);
